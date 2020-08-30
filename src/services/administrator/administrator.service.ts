@@ -42,9 +42,15 @@ export class AdministratorService {
 
     }
 
-    async editById(id: number, data: EditAdminstratorDto): Promise<Administrator> {
+    async editById(id: number, data: EditAdminstratorDto): Promise<Administrator | ApiResponse> {
         const admin: Administrator = await this.administrator.findOne(id);
         
+        if (admin === undefined) {
+            return new Promise((resolve) => {
+                resolve(new ApiResponse("error", -1002));
+            });
+        }
+
         const passwordHash = crypto.createHash('sha512');
         passwordHash.update(data.password);
         const passwordHashString = passwordHash.digest('hex').toUpperCase();

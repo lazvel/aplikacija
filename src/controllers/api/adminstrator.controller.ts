@@ -18,8 +18,17 @@ export class AdminstratorController {
     }
 
     @Get(':id') //api/adminstrator/4/
-    getById(@Param('id') adminstratorId: number): Promise<Administrator> {
-        return this.adminstratorService.getById(adminstratorId);
+    getById(@Param('id') adminstratorId: number): Promise<Administrator | ApiResponse> {
+        return new Promise(async (resolve) => {
+            const admin = await this.adminstratorService.getById(adminstratorId);
+        
+            if (admin === undefined ) {
+                resolve(new ApiResponse("error", -1002));
+            }
+
+            resolve(admin);
+        });
+        
     }
 
     @Put() //api/adminstrator/4/ PUT
@@ -29,7 +38,7 @@ export class AdminstratorController {
 
     // Post - za editovanje informacija o adminstratoru
     @Post(':id') //api/adminstrator/4/ POST
-    edit(@Param('id') id: number, @Body() data: EditAdminstratorDto): Promise<Administrator> {
+    edit(@Param('id') id: number, @Body() data: EditAdminstratorDto): Promise<Administrator | ApiResponse> {
        return this.adminstratorService.editById(id, data); 
     }
 }
