@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { Administrator } from '../../../entities/administrator.entity';
 import { AddAdministratorDto } from '../../dtos/adminstrator/add.adminstrator.dto';
 import { EditAdminstratorDto } from '../../dtos/adminstrator/edit.adminstrator.dto';
+import { resolve } from 'path';
+import { ApiResponse } from 'src/misc/api.response.class';
 
 @Injectable()
 export class AdministratorService {
@@ -20,7 +22,7 @@ export class AdministratorService {
         return this.administrator.findOne(id);
     }
 
-    add(data: AddAdministratorDto) {
+    add(data: AddAdministratorDto): Promise<Administrator | ApiResponse> {
         const passwordHash = crypto.createHash('sha512');
         passwordHash.update(data.password);
         const passwordHashString = passwordHash.digest('hex').toUpperCase();
@@ -29,7 +31,14 @@ export class AdministratorService {
         newAdmin.username = data.username;
         newAdmin.passwordHash = passwordHashString;
 
-        return this.administrator.save(newAdmin);
+        return new Promise((resolve) => {
+            this.administrator.save(newAdmin)
+            .then(data => resolve(data))
+            .catch(error => {
+                const response: ApiResponse = new ApiResponse("error", -1001);
+                resolve(response);
+            });
+        });
 
     }
 
