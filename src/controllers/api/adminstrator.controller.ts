@@ -3,6 +3,7 @@ import { AdministratorService } from "../../services/administrator/administrator
 import { Administrator } from "../../../entities/administrator.entity";
 import { AddAdministratorDto } from "../../dtos/adminstrator/add.adminstrator.dto";
 import { EditAdminstratorDto } from "../../dtos/adminstrator/edit.adminstrator.dto";
+import { ApiResponse } from "src/misc/api.response.class";
 
 
 @Controller('api/adminstrator')
@@ -22,7 +23,7 @@ export class AdminstratorController {
     }
 
     @Put() //api/adminstrator/4/ PUT
-    add(@Body() data: AddAdministratorDto): Promise<Administrator> {
+    add(@Body() data: AddAdministratorDto): Promise<Administrator | ApiResponse> {
         return this.adminstratorService.add(data); // data je Dto, servis transformise username i password u username i hash
     }
 
