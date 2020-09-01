@@ -17,5 +17,5 @@ import { CategoryService } from "src/services/category/category.service";
     }
 })
 export class CategoryController {
-    constructor(public categoryService: CategoryService) {}
+    constructor(public service: CategoryService) { }
 }
