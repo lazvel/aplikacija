@@ -17,7 +17,12 @@ import { FeatureService } from "src/services/feature/feature.service";
     },
     query: {
         join: {
-            
+            features: {
+                eager: true
+            },
+            categories: {
+                eager: true
+            }
         }
     }
 })
