@@ -19,6 +19,8 @@ import { CategoryController } from './controllers/api/category.controller';
 import { CategoryService } from './services/category/category.service';
 import { ArticleService } from './services/article/article.service';
 import { ArticleController } from './controllers/api/article.controller';
+import { FeatureService } from './services/feature/feature.service';
+import { FeatureController } from './controllers/api/feature.controller';
 
 @Module({
   imports: [
@@ -46,19 +48,22 @@ import { ArticleController } from './controllers/api/article.controller';
     TypeOrmModule.forFeature([ 
       Administrator,
       Category,
-      Article
+      Article,
+      Feature
     ])
   ],
   controllers: [
     AppController,
     AdminstratorController,
     CategoryController,
-    ArticleController
+    ArticleController,
+    FeatureController
   ],
   providers: [
     AdministratorService,
     CategoryService,
-    ArticleService
+    ArticleService,
+    FeatureService
   ],
 })
 export class AppModule {}
