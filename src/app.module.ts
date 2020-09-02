@@ -49,7 +49,9 @@ import { FeatureController } from './controllers/api/feature.controller';
       Administrator,
       Category,
       Article,
-      Feature
+      Feature,
+      ArticlePrice,
+      ArticleFeature
     ])
   ],
   controllers: [
