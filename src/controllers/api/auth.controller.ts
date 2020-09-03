@@ -26,7 +26,7 @@ export class AuthController {
         passwordHash.update(data.password);
         const passwordHashString = passwordHash.digest('hex').toUpperCase();
     
-        if(adminstrator.passwordHash === passwordHashString) {
+        if(adminstrator.passwordHash !== passwordHashString) {
             return new Promise(resolve => resolve(new ApiResponse('error', -3002)));
         }
 
@@ -45,7 +45,7 @@ export class AuthController {
         jwtData.ua = req.headers["user-agent"];
 
         // jwt - tajna sifra; json = {adminId, username, expire, ip, ua}
-        const token: string = jwt.sign(jwtData, jwtSecret); // potpisi jsonwebtoken
+        const token: string = jwt.sign(jwtData.toPlainObject(), jwtSecret); // potpisi jsonwebtoken
 
         const responseObject = new LoginInfoAdminstratorDto(
             adminstrator.administratorId,
