@@ -21,6 +21,7 @@ import { ArticleService } from './services/article/article.service';
 import { ArticleController } from './controllers/api/article.controller';
 import { FeatureService } from './services/feature/feature.service';
 import { FeatureController } from './controllers/api/feature.controller';
+import { AuthController } from './controllers/api/auth.controller';
 
 @Module({
   imports: [
@@ -59,7 +60,8 @@ import { FeatureController } from './controllers/api/feature.controller';
     AdminstratorController,
     CategoryController,
     ArticleController,
-    FeatureController
+    FeatureController,
+    AuthController
   ],
   providers: [
     AdministratorService,
