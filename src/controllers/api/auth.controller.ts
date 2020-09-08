@@ -36,7 +36,8 @@ export class AuthController {
         jwtData.administratorId = adminstrator.administratorId;
         jwtData.username = adminstrator.username;
     
-        const sada = new Date();
+        // eslint-disable-next-line prefer-const
+        let sada = new Date();
         sada.setDate(sada.getDate() + 14);
         const istekTmestamp = sada.getTime() / 1000;
         jwtData.exp = istekTmestamp;
@@ -45,7 +46,8 @@ export class AuthController {
         jwtData.ua = req.headers["user-agent"];
 
         // jwt - tajna sifra; json = {adminId, username, expire, ip, ua}
-        const token: string = jwt.sign(jwtData.toPlainObject(), jwtSecret); // potpisi jsonwebtoken
+        // eslint-disable-next-line prefer-const
+        let token: string = jwt.sign(jwtData.toPlainObject(), jwtSecret); // potpisi jsonwebtoken
 
         const responseObject = new LoginInfoAdminstratorDto(
             adminstrator.administratorId,
