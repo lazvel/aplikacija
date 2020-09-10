@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Controller, Post, Body, Param, UseInterceptors, UploadedFile } from "@nestjs/common";
+import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, Req } from "@nestjs/common";
 import { Crud } from "@nestjsx/crud";
 import { ArticleService } from "src/services/article/article.service";
 import { Article } from "entities/article.entity";
@@ -55,8 +55,7 @@ export class ArticleController {
     }
 
     @Post(':id/uploadPhoto/') // api/article/:id/uploadPhoto/
-    // nesto da presretne request gde ide photo -> file intercepter
-    @UseInterceptors(
+    @UseInterceptors( // nesto da presretne request gde ide photo -> file intercepter
         FileInterceptor('photo', {
             storage: diskStorage({
                 destination: StorageConfig.photoDestination,
@@ -64,15 +63,16 @@ export class ArticleController {
                     // Neka slika.jpg ->
                     // 20200909-2841989413-Neka-slika.jpg
                     // eslint-disable-next-line prefer-const
-                    let original: string = file.originalName;
+                    let original: string = file.originalname;
 
                     // eslint-disable-next-line prefer-const
                     let normalized = original.replace(/\s+/g, '-');
+                    normalized = normalized.replace(/[^A-z0-9\.\-]/g, '');
                     let sada = new Date();
                     let datePart = '';
                     datePart += sada.getFullYear().toString();
-                    datePart += (sada.getMonth() +1).toString();
-                    datePart += sada.getDate().toString;
+                    datePart += (sada.getMonth() + 1).toString();
+                    datePart += sada.getDate().toString();
 
                     let randomPart: string = 
                         new Array(10)
@@ -82,18 +82,22 @@ export class ArticleController {
                     
                     let fileName = datePart + '-' + randomPart + '-' + normalized;
 
+                    fileName = fileName.toLowerCase();
+
                     callback(null, fileName);
                 } 
             }),
             fileFilter: (req, file, callback) => {
                 // 1. check ext : JPG, PNG
                 if(!file.originalname.match(/\.(jpg|png)$/)) {
-                    callback(new Error('Bad file extensions!'), false);
+                    req.fileFilterError = 'Bad file extension!';
+                    callback(null, false);
                     return;
                 }
                 // 2. check tipa sadrzaja: image/jpeg, image/png (mimetype)
                 if(!(file.mimetype.includes('jpeg') || file.mimetype.includes('png'))) {
-                    callback(new Error('Bad file content!'), false);
+                    req.fileFilterError = 'Bad file content!';
+                    callback(null, false);
                     return;
                 }
                 // nema errora - null i prihvati file -> true
@@ -101,11 +105,26 @@ export class ArticleController {
             },
             limits: {
                 files: 1,
-                fieldSize: StorageConfig.photoMaxFileSize
+                fileSize: StorageConfig.photoMaxFileSize
             }
         })
     )
-    async uploadPhoto(@Param('id') articleId: number, @UploadedFile() photo): Promise<ApiResponse | Photo> {
+    async uploadPhoto(
+        @Param('id') articleId: number, 
+        @UploadedFile() photo,
+        @Req() req 
+        ): Promise<ApiResponse | Photo> {
+            if(req.fileFilterError) {
+                return new ApiResponse('error', -4002, req.fileFilterError);
+            }
+
+            if (!photo) {
+                return new ApiResponse('error', -4002, 'File not uploaded!');
+            }
+
+            // Real Mime Type chck
+
+            // Save a resized file
         const newPhoto: Photo = new Photo();
         newPhoto.articleId = articleId;
         newPhoto.imagePath = photo.filename;
