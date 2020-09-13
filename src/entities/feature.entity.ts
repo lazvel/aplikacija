@@ -36,7 +36,7 @@ export class Feature {
   // i kontra relacija u feature-u drugi param articles
   @ManyToMany(type => Article, article => article.features)
   @JoinTable({
-    name: 'article_feature',
+    name: "article_feature",
     joinColumn: { name: "feature_id", referencedColumnName: "featureId"},
     inverseJoinColumn : { name: "article_id", referencedColumnName: "articleId"}
   })

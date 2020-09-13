@@ -17,11 +17,14 @@ import { FeatureService } from "src/services/feature/feature.service";
     },
     query: {
         join: {
-            features: {
+            category: {
                 eager: true
             },
-            categories: {
-                eager: true
+            articleFeatures: {
+                eager: false
+            },
+            articles: {
+                eager: false
             }
         }
     }
