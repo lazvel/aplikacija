@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, Req, Delete } from "@nestjs/common";
+import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, Req, Delete, Patch } from "@nestjs/common";
 import { Crud } from "@nestjsx/crud";
 import { ArticleService } from "src/services/article/article.service";
 import { Article } from "src/entities/article.entity";
@@ -13,6 +13,7 @@ import { ApiResponse } from "src/misc/api.response.class";
 import * as fileType from 'file-type';
 import * as fs from 'fs';
 import * as sharp from 'sharp';
+import { EditArticleDto } from "src/dtos/article/edit.article.dto";
 
 @Controller('api/article')
 @Crud({
@@ -44,6 +45,9 @@ import * as sharp from 'sharp';
                 eager: true
             }
         }
+    },
+    routes: {
+        exclude: [ 'updateOneBase', 'replaceOneBase', 'deleteOneBase' ]
     }
 })
 export class ArticleController {
@@ -55,6 +59,11 @@ export class ArticleController {
     @Post('createFull') // api/article/createFull
     createFullArticle(@Body() data: AddArticleDto) {
         return this.service.createFullArticle(data);
+    }
+
+    @Patch(':id') // api/article/2
+    editFullArticle(@Param('id') id: number, @Body() data: EditArticleDto) {
+        return this.service.editFullArticle(id, data);
     }
 
     @Post(':id/uploadPhoto/') // api/article/:id/uploadPhoto/
