@@ -2,12 +2,13 @@ import { NestMiddleware, HttpException, HttpStatus, Injectable } from "@nestjs/c
 import { NextFunction, Request, Response } from "express";
 import { AdministratorService } from "src/services/administrator/administrator.service";
 import * as jwt from 'jsonwebtoken';
-import { JwtDataAdminstratorDto } from "src/dtos/adminstrator/jwt.data.adminstrator.dto";
+import { JwtDataDto } from "src/dtos/auth/jwt.data.dto";
 import { jwtSecret } from "config/jwt.secret";
+import { UserService } from "src/services/user/user.service";
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-    constructor( private readonly adminstratorService: AdministratorService) {}
+    constructor( private readonly adminstratorService: AdministratorService, public userService: UserService) {}
     
     async use(req: Request, res: Response, next: NextFunction) {
         
@@ -25,7 +26,7 @@ export class AuthMiddleware implements NestMiddleware {
 
         const tokenString = tokenParts[1];
 
-        let jwtData: JwtDataAdminstratorDto;
+        let jwtData: JwtDataDto;
         
         try {
             jwtData = jwt.verify(tokenString, jwtSecret);
@@ -45,10 +46,19 @@ export class AuthMiddleware implements NestMiddleware {
             throw new HttpException('Bad token found', HttpStatus.UNAUTHORIZED);
         }
 
-        const adminstrator = await this.adminstratorService.getById(jwtData.administratorId);
-        if(!adminstrator) {
-            throw new HttpException('Account not found', HttpStatus.UNAUTHORIZED);
+        if (jwtData.role === "administrator") {
+            const adminstrator = await this.adminstratorService.getById(jwtData.id);
+            if(!adminstrator) {
+                throw new HttpException('Account not found', HttpStatus.UNAUTHORIZED);
+            }
+        } else if (jwtData.role === "user") {
+            const user = await this.userService.getById(jwtData.id);
+            if(!user) {
+                throw new HttpException('Account not found', HttpStatus.UNAUTHORIZED);
+            }
         }
+
+        
 
         const trenutniTimeStamp = new Date().getTime() / 1000;
         if(trenutniTimeStamp >= jwtData.exp) {
