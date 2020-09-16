@@ -61,7 +61,7 @@ export class AuthController {
         return new Promise(resolve => resolve(responseObject));
     }
 
-    @Put('user/register') // auth/user/register
+    @Post('user/register') // auth/user/register
     async userRegister(@Body() data: UserRegistrationDto) {
         return await this.userService.register(data);
     }
