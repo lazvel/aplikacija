@@ -77,6 +77,7 @@ export class CartService {
                 "cartArticles",
                 "cartArticles.article",
                 "cartArticles.article.category",
+                "cartArticles.article.articlePrices",
             ],
         })
     }
