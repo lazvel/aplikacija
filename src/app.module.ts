@@ -25,6 +25,8 @@ import { AuthController } from './controllers/api/auth.controller';
 import { AuthMiddleware } from './midlewares/auth.middleware';
 import { PhotoService } from './services/photo/photo.service';
 import { UserService } from './services/user/user.service';
+import { CartService } from './services/cart/cart.service';
+import { UserCartController } from './controllers/api/user.cart.controller';
 
 @Module({
   imports: [
@@ -57,7 +59,10 @@ import { UserService } from './services/user/user.service';
       ArticlePrice,
       ArticleFeature,
       Photo,
-      User
+      User,
+      Cart,
+      CartArticle,
+      Order
     ])
   ],
   controllers: [
@@ -66,7 +71,8 @@ import { UserService } from './services/user/user.service';
     CategoryController,
     ArticleController,
     FeatureController,
-    AuthController
+    AuthController,
+    UserCartController
   ],
   providers: [
     AdministratorService,
@@ -74,7 +80,8 @@ import { UserService } from './services/user/user.service';
     ArticleService,
     FeatureService,
     PhotoService,
-    UserService
+    UserService,
+    CartService
   ],
   exports: [
     AdministratorService,

@@ -1,0 +1,27 @@
+User dodaj robu u korpu:
+1. Da li postoji u bp za korisnika otvorena korpa koja nije iskoriscena
+(za koju se ne vezuje se porudzbina):
+    -Da: Koristimo tu korpu i u nju dodajemo robu
+    -Ne: napraviti novu korpu za korisnika i u nju dodati robu
+
+2. DA li dodaje robu koja vec postoji u korpi(! kolicina) ?
+    -Ne: Dodajemo evidenciju te robe(+ kolicina) u korpu.
+    -Da: Menjamo evidenciju dodate robe, tako da uvecamo kolicinu koja
+    je vec u korpi za kolicinu koja se sada dodaje.
+
+3. Vratiti sve podatke o korpi i evidenciju dodatih artikala i
+podatke o samim artiklima, kao i njihove prosirene podatke.
+
+Izmena dodate robe u korpi:
+1. Da li postoji u bp za korisnika otvorena korpa koja nije iskoriscena
+(za koju se ne vezuje se porudzbina):
+    -Da: Da li postoji evidencija da je roba dodata u korpu?
+        -Da: Za tu evidenciju dodate robe menjamo kolicinu.
+        -Ne: Ne radimo nista.
+    -Ne: Ne radimo nista
+
+2. Ako je u korpi korisnika za evidentiranu robu upisano sada 0,
+    treba da obrisemo tu evidenciju dodate robe iz korpe.
+
+3. Vratiti sve podatke o korpi i evidenciju dodatih artikala i
+podatke o samim artiklima, kao i njihove prosirene podatke.
