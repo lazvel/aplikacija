@@ -10,8 +10,6 @@ export class OrderService {
     constructor(
         @InjectRepository(Order) private readonly order: Repository<Order>,
         @InjectRepository(Cart) private readonly cart: Repository<Cart>,
-        
-        
     ) {}
 
     async add(cartId: number): Promise<Order | ApiResponse> {
