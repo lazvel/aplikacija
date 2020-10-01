@@ -74,12 +74,12 @@ export class AuthController {
         return await this.userService.register(data);
     }
 
-    @Post('user/login') //localhost:3000/auth/administrator/login
+    @Post('user/login') //localhost:3000/auth/user/login
     async doUserLogin(@Body() data: LoginUserDto, @Req() req: Request): Promise<LoginInfoDto | ApiResponse> {
         const user = await this.userService.getByEmail(data.email);
 
         if (!user) {
-            return new Promise(resolve => resolve(new ApiResponse('error', -3001)));
+            return new Promise(resolve => resolve(new ApiResponse('error', -3001, "Unkown email!")));
         }
 
         const passwordHash = crypto.createHash('sha512');
@@ -87,7 +87,7 @@ export class AuthController {
         const passwordHashString = passwordHash.digest('hex').toUpperCase();
     
         if(user.passwordHash !== passwordHashString) {
-            return new Promise(resolve => resolve(new ApiResponse('error', -3002)));
+            return new Promise(resolve => resolve(new ApiResponse('error', -3002, "Bad password!")));
         }
 
         // moramo vratiti dozirane info kao id, username, token(JWT)
