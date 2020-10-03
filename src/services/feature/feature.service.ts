@@ -3,11 +3,48 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Feature } from "src/entities/feature.entity";
+import DistinctFeatureValuesDto from "src/dtos/feature/distinct.feature.values.dto";
+import { ArticleFeature } from "src/entities/article-feature.entity";
 
 @Injectable()
 export class FeatureService extends TypeOrmCrudService<Feature> {
-    constructor( @InjectRepository(Feature) private readonly feature: Repository<Feature> // !!! cim ga pomenem, evidentiraj u app module typeorm za feature..
+    constructor( 
+        @InjectRepository(Feature) private readonly feature: Repository<Feature>, // !!! cim ga pomenem, evidentiraj u app module typeorm za feature..
+        @InjectRepository(ArticleFeature) private readonly articleFeature: Repository<ArticleFeature> // !!! cim ga pomenem, evidentiraj u app module typeorm za feature..
     ) {
         super(feature);
+    }
+
+    async getDistinctValuesByCategoryId(categoryId : number):Promise<DistinctFeatureValuesDto> {
+        const features = await this.feature.find({
+            categoryId: categoryId,
+        });
+
+        const result: DistinctFeatureValuesDto = {
+            features: [],
+        };
+
+        if (!features || features.length === 0) {
+            return result;
+        }
+
+        result.features = await Promise.all(features.map(async feature => {
+            const values: string[] = 
+            (
+                await this.articleFeature.createQueryBuilder("af")
+                .select("DISTINCT af.value", 'value')
+                .where('af.featureId = :featureId', { featureId: feature.featureId})
+                .orderBy('af.value', 'ASC')
+                .getRawMany()
+            ).map(item => item.value);
+
+            return {
+                featureId: feature.featureId,
+                name: feature.name,
+                values: values,
+            };
+        }));
+
+        return result;
     }
 }

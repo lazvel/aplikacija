@@ -128,6 +128,9 @@ export class ArticleService extends TypeOrmCrudService<Article> {
         "ap.createdAt = (SELECT MAX(ap.created_at) FROM article_price AS ap WHERE ap.article_id = article.article_id)"); // Ovo nije primer najbolje prakse!
         // pametnije resenje bi bilo "ap.current = 1" (zahteva trigger_article_price_ai)
         builder.leftJoinAndSelect("article.articleFeatures", "af");
+        builder.leftJoinAndSelect("article.features", "features");
+        builder.leftJoinAndSelect("article.photos", "photos");
+
 
         builder.where('article.categoryId = :catId', { catId: data.categoryId });
 
@@ -192,21 +195,12 @@ export class ArticleService extends TypeOrmCrudService<Article> {
         builder.skip(page * perPage);
         builder.take(perPage);
 
-        let articleIds = (await builder.getMany()).map(article => article.articleId);
+        let articles = await  builder.getMany();
 
-        if (articleIds.length === 0) {
+        if (articles.length === 0) {
             return new ApiResponse("ok", 0, "No results found for these search parameters.");
         }
 
-        return await this.article.find({
-            where:{ articleId: In(articleIds)},
-            relations: [
-                "category",
-                "articleFeatures",
-                "features",
-                "articlePrices",
-                "photos"
-            ]
-        });
+        return articles;
     }
 }
